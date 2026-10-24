@@ -1,5 +1,13 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Blokir berkas sensitif. Aturan mod_rewrite di .htaccess root My_Porto
+    # tidak diwarisi ke direktori ini, sehingga guard harus diulang di sini.
+    RewriteRule "(^|/)\.git" - [F,L]
+    RewriteRule "(^|/)\.env$" - [F,L]
+    RewriteRule "(^|/)\.env\.(local|production|development|staging|test)$" - [F,L]
+    RewriteRule "\.(sqlite|sqlite3|sql|db|dump)$" - [F,L]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ index.php/$1 [L]
