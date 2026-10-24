@@ -1,11 +1,18 @@
 <div class="row">
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-body text-center">
-                <i class="fa-solid fa-store fa-3x text-primary mb-3"></i>
-                <h5 class="card-title"><?= htmlspecialchars($store->store_name) ?></h5>
-                <p class="text-muted small">Seller Dashboard</p>
-                <a href="<?= base_url('seller/store_form') ?>" class="btn btn-outline-secondary btn-sm w-100">Edit Store Info</a>
+        <div class="card shadow-sm border-0 mb-4 rounded-4">
+            <div class="card-body text-center p-4">
+                <div class="rounded-circle bg-warning-subtle text-warning d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="fa-solid fa-store fs-3"></i>
+                </div>
+                <h5 class="card-title fw-bold mb-1"><?= htmlspecialchars($store->store_name) ?></h5>
+                <p class="text-muted small mb-3">Merchant Hub</p>
+                
+                <div class="d-grid gap-2">
+                    <a href="<?= base_url('seller') ?>" class="btn btn-primary btn-sm"><i class="fa-solid fa-boxes-stacked me-1"></i> My Products</a>
+                    <a href="<?= base_url('seller/orders') ?>" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-receipt me-1"></i> Incoming Orders</a>
+                    <a href="<?= base_url('seller/store_form') ?>" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-gear me-1"></i> Store Settings</a>
+                </div>
             </div>
         </div>
     </div>
