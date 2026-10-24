@@ -9,13 +9,46 @@ class Checkout extends CI_Controller {
             redirect('auth/login');
         }
         $this->load->model('Order_model');
+        $this->load->model('Product_model');
     }
 
+    /**
+     * Halaman konfirmasi: menampilkan ringkasan keranjang sebelum pesanan dibuat.
+     */
     public function index() {
         $cart = $this->session->userdata('cart');
-        
+
         if (empty($cart)) {
-            $this->session->set_flashdata('error', 'Your cart is empty.');
+            $this->session->set_flashdata('error', 'Keranjang Anda masih kosong.');
+            redirect('cart');
+        }
+
+        $total = 0;
+        foreach ($cart as $item) {
+            $total += ($item['price'] * $item['qty']);
+        }
+
+        $data['title'] = 'Konfirmasi Pesanan';
+        $data['cart'] = $cart;
+        $data['total'] = $total;
+
+        $this->load->view('layouts/header', $data);
+        $this->load->view('checkout/index', $data);
+        $this->load->view('layouts/footer');
+    }
+
+    /**
+     * Membuat pesanan setelah pembeli menekan tombol konfirmasi.
+     */
+    public function place() {
+        if (!$this->input->post()) {
+            redirect('checkout');
+        }
+
+        $cart = $this->session->userdata('cart');
+
+        if (empty($cart)) {
+            $this->session->set_flashdata('error', 'Keranjang Anda masih kosong.');
             redirect('cart');
         }
 
@@ -27,13 +60,12 @@ class Checkout extends CI_Controller {
         $buyer_id = $this->session->userdata('user_id');
 
         if ($this->Order_model->create_order($buyer_id, $total, $cart)) {
-            // Clear cart
             $this->session->set_userdata('cart', []);
-            $this->session->set_flashdata('success', 'Order placed successfully!');
+            $this->session->set_flashdata('success', 'Pesanan berhasil dibuat.');
             redirect('orders');
-        } else {
-            $this->session->set_flashdata('error', 'Failed to process order. Please try again.');
-            redirect('cart');
         }
+
+        $this->session->set_flashdata('error', 'Gagal memproses pesanan. Silakan coba lagi.');
+        redirect('cart');
     }
 }
