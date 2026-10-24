@@ -9,10 +9,31 @@
     </div>
 </div>
 
+<!-- Search Bar -->
+<div class="row mb-4">
+    <div class="col-lg-6 mx-auto">
+        <form method="get" action="<?= base_url('home/products') ?>" class="d-flex gap-2" role="search">
+            <input type="search" name="q" value="<?= htmlspecialchars(isset($keyword) ? $keyword : '') ?>"
+                   class="form-control" placeholder="Cari produk atau nama toko..." aria-label="Cari produk">
+            <button type="submit" class="btn btn-primary text-nowrap"><i class="fa-solid fa-magnifying-glass me-1"></i> Cari</button>
+            <?php if (!empty($keyword)): ?>
+                <a href="<?= base_url('home/products') ?>" class="btn btn-outline-secondary text-nowrap">Reset</a>
+            <?php endif; ?>
+        </form>
+    </div>
+</div>
+
 <!-- Product Catalog -->
 <div class="row">
     <div class="col-12 mb-4">
-        <h3 class="border-bottom pb-2">Latest Products</h3>
+        <h3 class="border-bottom pb-2">
+            <?php if (!empty($keyword)): ?>
+                Hasil pencarian untuk &ldquo;<?= htmlspecialchars($keyword) ?>&rdquo;
+                <small class="text-muted fs-6">(<?= count($products) ?> produk)</small>
+            <?php else: ?>
+                Latest Products
+            <?php endif; ?>
+        </h3>
     </div>
     
     <?php if (empty($products)): ?>
@@ -25,15 +46,19 @@
         <?php foreach ($products as $p): ?>
             <div class="col-md-3 col-sm-6 mb-4">
                 <div class="card h-100 border-0 shadow-sm product-card">
-                    <div class="product-img-wrapper">
-                        <?php if ($p->image): ?>
-                            <img src="<?= base_url('assets/uploads/products/' . $p->image) ?>" alt="<?= htmlspecialchars($p->name) ?>" class="card-img-top">
-                        <?php else: ?>
-                            <div class="text-muted"><i class="fa-solid fa-image fa-3x"></i></div>
-                        <?php endif; ?>
-                    </div>
+                    <a href="<?= base_url('home/product/' . $p->id) ?>" class="text-decoration-none">
+                        <div class="product-img-wrapper">
+                            <?php if ($p->image): ?>
+                                <img src="<?= base_url('assets/uploads/products/' . $p->image) ?>" alt="<?= htmlspecialchars($p->name) ?>" class="card-img-top">
+                            <?php else: ?>
+                                <div class="text-muted"><i class="fa-solid fa-image fa-3x"></i></div>
+                            <?php endif; ?>
+                        </div>
+                    </a>
                     <div class="card-body d-flex flex-column">
-                        <h6 class="card-title text-truncate" title="<?= htmlspecialchars($p->name) ?>"><?= htmlspecialchars($p->name) ?></h6>
+                        <h6 class="card-title text-truncate" title="<?= htmlspecialchars($p->name) ?>">
+                            <a href="<?= base_url('home/product/' . $p->id) ?>" class="text-decoration-none text-dark"><?= htmlspecialchars($p->name) ?></a>
+                        </h6>
                         <p class="text-primary fw-bold mb-1">$<?= number_format($p->price, 2) ?></p>
                         <small class="text-muted mb-3"><i class="fa-solid fa-store"></i> <?= htmlspecialchars($p->store_name) ?></small>
                         <div class="mt-auto">
