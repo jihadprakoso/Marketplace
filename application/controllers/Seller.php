@@ -11,6 +11,7 @@ class Seller extends CI_Controller {
         }
         $this->load->model('Store_model');
         $this->load->model('Product_model');
+        $this->load->model('Order_model');
     }
 
     public function index() {
@@ -79,7 +80,7 @@ class Seller extends CI_Controller {
                 // Handle Image Upload
                 if (!empty($_FILES['image']['name'])) {
                     $config['upload_path'] = './assets/uploads/products/';
-                    $config['allowed_types'] = 'gif|jpg|jpeg|png';
+                    $config['allowed_types'] = 'gif|jpg|jpeg|png|svg';
                     $config['max_size'] = 2048;
                     $config['file_name'] = time() . '_' . $_FILES['image']['name'];
 
@@ -117,5 +118,53 @@ class Seller extends CI_Controller {
             $this->session->set_flashdata('success', 'Product deleted.');
         }
         redirect('seller');
+    }
+
+    public function orders() {
+        $user_id = $this->session->userdata('user_id');
+        $store = $this->Store_model->get_store_by_user($user_id);
+        if (!$store) {
+            $this->session->set_flashdata('error', 'Please configure your store first.');
+            redirect('seller');
+        }
+
+        $data['title'] = 'Incoming Orders - Seller';
+        $data['store'] = $store;
+        $data['orders'] = $this->Order_model->get_seller_orders($store->id);
+        $data['statuses'] = $this->Order_model->allowed_statuses();
+
+        $this->load->view('layouts/header', $data);
+        $this->load->view('seller/orders', $data);
+        $this->load->view('layouts/footer');
+    }
+
+    /**
+     * Seller mengubah status pesanan yang memuat produk miliknya.
+     */
+    public function update_order_status($order_id) {
+        if (!$this->input->post()) {
+            redirect('seller/orders');
+        }
+
+        $store = $this->Store_model->get_store_by_user($this->session->userdata('user_id'));
+        if (!$store) {
+            $this->session->set_flashdata('error', 'Silakan atur toko Anda terlebih dahulu.');
+            redirect('seller');
+        }
+
+        if (!$this->Order_model->order_belongs_to_store($order_id, $store->id)) {
+            $this->session->set_flashdata('error', 'Pesanan tersebut tidak memuat produk dari toko Anda.');
+            redirect('seller/orders');
+        }
+
+        $status = (string) $this->input->post('status');
+
+        if ($this->Order_model->update_status($order_id, $status)) {
+            $this->session->set_flashdata('success', 'Status pesanan #' . str_pad($order_id, 5, '0', STR_PAD_LEFT) . ' diubah menjadi ' . $status . '.');
+        } else {
+            $this->session->set_flashdata('error', 'Status pesanan tidak valid.');
+        }
+
+        redirect('seller/orders');
     }
 }
