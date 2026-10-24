@@ -18,13 +18,18 @@
         <a class="navbar-brand fw-bold" href="<?= base_url() ?>">
             <i class="fa-solid fa-shop me-2"></i>JihadMarket
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" href="<?= base_url() ?>">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?= base_url('home/products') ?>">Products</a></li>
+                <?php if ($this->session->userdata('user_role') === 'seller'): ?>
+                    <li class="nav-item"><a class="nav-link text-warning" href="<?= base_url('seller') ?>"><i class="fa-solid fa-store me-1"></i>Seller Hub</a></li>
+                <?php elseif ($this->session->userdata('user_role') === 'admin'): ?>
+                    <li class="nav-item"><a class="nav-link text-info" href="<?= base_url('admin') ?>"><i class="fa-solid fa-gauge me-1"></i>Admin Panel</a></li>
+                <?php endif; ?>
             </ul>
             <ul class="navbar-nav">
                 <?php if ($this->session->userdata('user_id')): ?>
@@ -39,13 +44,14 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <?php if ($this->session->userdata('user_role') === 'admin'): ?>
-                                <li><a class="dropdown-item" href="<?= base_url('admin') ?>">Admin Dashboard</a></li>
+                                <li><a class="dropdown-item" href="<?= base_url('admin') ?>"><i class="fa-solid fa-gauge me-1"></i> Admin Dashboard</a></li>
                             <?php elseif ($this->session->userdata('user_role') === 'seller'): ?>
-                                <li><a class="dropdown-item" href="<?= base_url('seller') ?>">Seller Dashboard</a></li>
+                                <li><a class="dropdown-item" href="<?= base_url('seller') ?>"><i class="fa-solid fa-boxes-stacked me-1"></i> My Products</a></li>
+                                <li><a class="dropdown-item" href="<?= base_url('seller/orders') ?>"><i class="fa-solid fa-receipt me-1"></i> Incoming Orders</a></li>
                             <?php endif; ?>
-                            <li><a class="dropdown-item" href="<?= base_url('orders') ?>">My Orders</a></li>
+                            <li><a class="dropdown-item" href="<?= base_url('orders') ?>"><i class="fa-solid fa-clock-rotate-left me-1"></i> My Orders</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="<?= base_url('auth/logout') ?>">Logout</a></li>
+                            <li><a class="dropdown-item text-danger" href="<?= base_url('auth/logout') ?>"><i class="fa-solid fa-right-from-bracket me-1"></i> Logout</a></li>
                         </ul>
                     </li>
                 <?php else: ?>
